@@ -9,8 +9,6 @@ To get started with AuthApi, follow these steps:
 ### 1. Clone the Repository
 
 Clone the AuthApi repository to your local machine:
-
-```bash
 git clone https://github.com/Sadek00/AuthApi.git
 
 
