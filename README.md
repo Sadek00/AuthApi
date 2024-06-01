@@ -1,19 +1,20 @@
-AuthApi
+# AuthApi
+
 AuthApi is a secure authentication API built with .NET Core Web API and PostgreSQL. It provides essential authentication functionalities such as user registration, login, role management, and more.
 
-Getting Started
+## Getting Started
+
 To get started with AuthApi, follow these steps:
 
-1. Clone the Repository
+### 1. Clone the Repository
+
 Clone the AuthApi repository to your local machine:
 
-bash
-Copy code
+```bash
 git clone https://github.com/Sadek00/AuthApi.git
-2. Set Up PostgreSQL Database
-AuthApi uses PostgreSQL as its database. Make sure you have PostgreSQL installed on your machine. Then, create a new database for AuthApi.
 
-3. Update Connection String
+
+### 3. Update Connection String
 In the appsettings.json file, update the connection string to point to your PostgreSQL database:
 
 json
