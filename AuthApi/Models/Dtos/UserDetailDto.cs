@@ -6,7 +6,7 @@ namespace AuthApi.Models.Dtos
         public string? FirstName { get; set; }
         public string LastName { get; set; } = string.Empty;
         public string? Email { get; set; }
-        public string[]? Roles { get; set; }
+        public List<string>? Roles { get; set; }
         public string? PhoneNumber { get; set; }
         public bool TwoFacotrEnabled { get; set; }
         public bool PhoneNumberConfirmed { get; set; }

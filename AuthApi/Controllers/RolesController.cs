@@ -55,16 +55,21 @@ namespace API.Controllers
         [HttpGet("GetRoles")]
         [SwaggerOperation(Summary = "Get all roles", Description = "Retrieves a list of all roles along with the total number of users in each role.")]
         [SwaggerResponse(200, "List of roles along with total users", typeof(RoleResponseDto[]))]
-        public async Task<ActionResult<RoleResponseDto[]>> GetRoles()
+        public async Task<ActionResult<IEnumerable<RoleResponseDto>>> GetRoles()
         {
-            var roles = await _roleManager.Roles
-                .Select(r => new RoleResponseDto
+            var rolesList = await _roleManager.Roles.ToListAsync();
+            var roles = new List<RoleResponseDto>();
+
+            foreach (var role in rolesList)
+            {
+                var totalUsers = (await _userManager.GetUsersInRoleAsync(role.Name!)).Count;
+                roles.Add(new RoleResponseDto
                 {
-                    Id = r.Id,
-                    Name = r.Name,
-                    TotalUsers = _userManager.GetUsersInRoleAsync(r.Name!).Result.Count
-                })
-                .ToArrayAsync();
+                    Id = role.Id,
+                    Name = role.Name,
+                    TotalUsers = totalUsers
+                });
+            }
 
             return Ok(roles);
         }

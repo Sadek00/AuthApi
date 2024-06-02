@@ -1,3 +1,4 @@
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -58,6 +59,11 @@ namespace AuthApi.Controllers
             }
 
             var roles = registerDto.Roles ?? new List<string> { "User" };
+            if (!await _roleManager.RoleExistsAsync("User"))
+            {
+                await _roleManager.CreateAsync(new IdentityRole("User"));
+            }
+
             foreach (var role in roles)
             {
                 await _userManager.AddToRoleAsync(user, role);
@@ -120,7 +126,7 @@ namespace AuthApi.Controllers
                 Email = user.Email ?? string.Empty,
                 FirstName = user.FirstName ?? string.Empty,
                 LastName = user.LastName ?? string.Empty,
-                Roles = roles.ToArray(),
+                Roles = roles.ToList() ?? new List<string>(),
                 PhoneNumber = user.PhoneNumber,
                 PhoneNumberConfirmed = user.PhoneNumberConfirmed,
                 AccessFailedCount = user.AccessFailedCount
@@ -134,16 +140,25 @@ namespace AuthApi.Controllers
         [SwaggerResponse(200, "User details retrieved successfully.", typeof(IEnumerable<UserDetailDto>))]
         public async Task<ActionResult<IEnumerable<UserDetailDto>>> GetUsers()
         {
-            var users = await _userManager.Users
-                .Select(u => new UserDetailDto
+            var usersList = await _userManager.Users.ToListAsync();
+            var users = new List<UserDetailDto>();
+
+            foreach (var u in usersList)
+            {
+                var roles = await _userManager.GetRolesAsync(u);
+                users.Add(new UserDetailDto
                 {
                     Id = u.Id,
                     Email = u.Email ?? string.Empty,
                     FirstName = u.FirstName ?? string.Empty,
                     LastName = u.LastName ?? string.Empty,
-                    Roles = _userManager.GetRolesAsync(u).Result.ToArray()
-                })
-                .ToListAsync();
+                    Roles = roles.ToList() ?? new List<string>(),
+                    PhoneNumber = u.PhoneNumber,
+                    TwoFacotrEnabled = u.TwoFactorEnabled,
+                    PhoneNumberConfirmed = u.PhoneNumberConfirmed,
+                    AccessFailedCount = u.AccessFailedCount
+                });
+            }
 
             return Ok(users);
         }
